@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation Page</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #c76372, #acc6eb);
+            font-family: Arial, sans-serif;
+        }
+        header {
+            padding: 20px;
+            margin-top: 0;
+            font-size: xx-large;
+            text-align: center;
+            color:white;
+        }
+        .box-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .box {
+            width: 80%;
+            max-width: 600px;
+            height: auto;
+            min-height: 120px;
+            background: rgb(183, 188, 185);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 20px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+   <header>
+        <h1><i>Best match for you!!</i></h1>
+    </header>
+
+    <div class="box-container" id="recommendations">
+        <!-- Recommendations will load here -->
+    </div>
+
+    <script>
+      // Load recommendations safely from localStorage
+      const container = document.getElementById("recommendations");
+      let recos = [];
+      try {
+        recos = JSON.parse(localStorage.getItem("recommendations") || "[]");
+      } catch (err) {
+        console.error("Error parsing recommendations from localStorage:", err);
+      }
+
+      console.log("Loaded recommendations:", recos);
+
+      if (!recos || recos.length === 0) {
+        container.innerHTML = "<div class='box'>⚠ No recommendations available</div>";
+      } else {
+        recos.forEach((rec, i) => {
+          const box = document.createElement("div");
+          box.className = "box";
+
+          // Handle undefined or different key names
+          const title = rec.TITLE || rec.title || "Internship";
+          const company = rec.COMPANY_NAME || rec.company_name || "N/A";
+          const skills = rec.REQUIRED_SKILLS || rec.skills || "N/A";
+          const duration = rec.Duration_num || rec.duration_num || "N/A";
+          const education = rec.EDUCATION_LEVEL || rec.education_level || "Any";
+          const matchScore = rec.Match_Score || rec.match_score || 0;
+
+          box.innerHTML = `
+            <b>${i+1}. ${title}</b><br>
+            Company: ${company}<br>
+            Skills: ${skills}<br>
+            Duration: ${duration} months<br>
+            Education: ${education}<br>
+            Match Score: ${matchScore.toFixed(2)}%
+          `;
+          container.appendChild(box);
+        });
+      }
+    </script>
+</body>
+</html>
