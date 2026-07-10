@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #c76372, #acc6eb);
+            overflow: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 60px 100px;
+            border-radius: 40px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            width: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            animation: fadeInDown 1s ease forwards;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            text-align: center;
+        }
+
+        input::placeholder {
+            color: #ddd;
+        }
+
+        input:focus {
+            width: 110%;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 35px;
+            border-radius: 50px;
+            border: none;
+            color: white;
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #6e8efb;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: float 6s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-80px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Enter Your Details</h1>
+        <input type="text" id="username" placeholder="Your Name">
+        <input type="number" id="age" placeholder="Your Age (21-24)">
+        <button class="btn" onclick="saveDetails()">Submit</button>
+        <div class="particle" style="width:10px; height:10px; top:10%; left:20%; animation-delay: 0s;"></div>
+        <div class="particle" style="width:15px; height:15px; top:30%; left:80%; animation-delay: 2s;"></div>
+        <div class="particle" style="width:8px; height:8px; top:70%; left:50%; animation-delay: 1s;"></div>
+        <div class="particle" style="width:12px; height:12px; top:60%; left:30%; animation-delay: 3s;"></div>
+    </div>
+
+    <script>
+        function saveDetails() {
+            let name = document.getElementById("username").value.trim();
+            let age = parseInt(document.getElementById("age").value);
+
+            if (name === "") {
+                alert("Please enter your name!");
+                return;
+            }
+            else if (isNaN(age) || age < 21 || age > 24) {
+                alert("Age must be between 21 and 24!");
+                return;
+            }
+
+            // --- LocalStorage me save ---
+            localStorage.setItem("username", name);
+            localStorage.setItem("age", age);
+
+            // ✅ FIX: Removed the premature fetch call.
+            // Redirect to the next page
+            window.location.href = "3page.html";
+        }
+    </script>
+</body>
+
+</html>
