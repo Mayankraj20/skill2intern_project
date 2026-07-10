@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #c76372, #acc6eb);
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        header {
+            font-size: 4rem;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            text-align: center;
+        }
+
+        .message {
+            font-size: 5rem;
+            font-weight: bold;
+            text-align: center;
+            animation: fadeIn 2s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button {
+            margin-top: 0px;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            font-weight: 100;
+            color: white;
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            background: linear-gradient(45deg, #dd2476, #ff512f);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="message" id="greeting"></div>
+
+    <script>
+        // LocalStorage se user ka naam fetch karo
+        let name = localStorage.getItem("username") || "Friend";
+        if (name) {
+            document.getElementById("greeting").innerHTML = "Hey " + name + " 👋<br>";
+        }
+
+        // Backend ko notify karne ke liye fetch
+        // Agar chahte ho ki welcome page visit hone pe backend me bhi log save ho jaye
+        if (name !== "Friend") {
+            fetch("http://127.0.0.1:5000/welcome_visit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: name })
+            })
+                .then(res => res.json())
+                .then(data => console.log("Backend Response:", data.message))
+                .catch(err => console.error("Backend Error:", err));
+        }
+    </script>
+
+    <br><br>
+    <header>
+        <p>Let's find the <br>perfect internship <br>for you!</p>
+    </header>
+
+    <br><br>
+
+    <a href="4page.html">
+        <button>GET STARTED ➨</button>
+    </a>
+
+</body>
+
+</html>
