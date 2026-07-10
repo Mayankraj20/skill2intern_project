@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Selector</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #c76372, #acc6eb);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .container {
+      width: 550px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 25px;
+      color: #fff;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .selected-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .skill-tag {
+      background: linear-gradient(45deg, #8c64c5, #3e8a5d);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .skill-tag span:last-child {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    .skills-list {
+      max-height: 230px;
+      overflow-y: auto;
+      border-radius: 10px;
+      padding: 5px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .skills-list div {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      transition: background 0.2s;
+    }
+
+    .skills-list div:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .skills-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .skills-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 5px;
+    }
+
+    .submit-btn {
+      display: block;
+      margin: 25px auto 0;
+      padding: 12px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(45deg, #ff512f, #dd2476);
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #43e97b, #38f9d7);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Select Your Skills</h2>
+    <div class="selected-skills" id="selectedSkills"></div>
+    <input type="text" id="skillSearch" placeholder="Search skills...">
+    <div class="skills-list" id="skillsList"></div>
+    <a href="7page.html">
+
+      <button type="button" class="submit-btn" onclick="saveSkills()">Submit</button></a>
+  </div>
+
+  <script>
+    const skills = [
+      "HTML", "CSS", "JavaScript", "React", "Angular", "Vue", "Node.js", "Express",
+      "Python", "Django", "Flask", "Java", "Spring Boot", "C", "C++", "C#", "Go", "Rust",
+      "PHP", "Laravel", "Ruby", "Rails", "Kotlin", "Swift", "Objective-C",
+      "SQL", "MySQL", "PostgreSQL", "MongoDB", "Firebase", "Redis",
+      "AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "Linux", "Git", "GitHub",
+      "DevOps", "CI/CD", "Machine Learning", "Deep Learning", "NLP", "Data Science",
+      "Artificial Intelligence", "Computer Vision", "TensorFlow", "PyTorch", "Pandas",
+      "NumPy", "Scikit-learn", "Hadoop", "Spark", "Big Data", "Tableau", "Power BI",
+      "UI/UX", "Figma", "Adobe XD", "Canva", "Blockchain", "Solidity", "Web3",
+      "Cybersecurity", "Ethical Hacking", "Penetration Testing", "Cryptography",
+      "Jenkins", "Terraform", "Ansible", "Selenium", "JUnit", "TestNG",
+      "Agile", "Scrum", "Jira", "Notion", "Trello", "Project Management",
+      "TypeScript", "GraphQL", "REST API", "JSON", "XML", "WebSockets",
+      "Bootstrap", "TailwindCSS", "SASS", "Material UI",
+      "Next.js", "Nuxt.js", "Svelte", "Three.js", "GSAP",
+      "Unity", "Unreal Engine", "Game Development",
+      "Microservices", "System Design", "Data Structures", "Algorithms",
+      "Operating Systems", "Computer Networks", "Database Management"
+    ];
+
+    const skillListDiv = document.getElementById("skillsList");
+    const searchInput = document.getElementById("skillSearch");
+    const selectedSkillsDiv = document.getElementById("selectedSkills");
+    let selectedSkills = [];
+
+    function renderSkills(filter = "") {
+      skillListDiv.innerHTML = "";
+      skills.filter(skill => skill.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(skill => {
+          const div = document.createElement("div");
+          div.textContent = skill;
+          div.addEventListener("click", () => addSkill(skill));
+          skillListDiv.appendChild(div);
+        });
+    }
+
+    function addSkill(skill) {
+      if (!selectedSkills.includes(skill)) {
+        selectedSkills.push(skill);
+        updateSelectedSkills();
+      }
+    }
+
+    function removeSkill(skill) {
+      selectedSkills = selectedSkills.filter(s => s !== skill);
+      updateSelectedSkills();
+    }
+
+    function updateSelectedSkills() {
+      selectedSkillsDiv.innerHTML = "";
+      selectedSkills.forEach(skill => {
+        const tag = document.createElement("div");
+        tag.className = "skill-tag";
+        const text = document.createElement("span");
+        text.textContent = skill;
+        const cross = document.createElement("span");
+        cross.textContent = "❌";
+        cross.addEventListener("click", () => removeSkill(skill));
+        tag.appendChild(text);
+        tag.appendChild(cross);
+        selectedSkillsDiv.appendChild(tag);
+      });
+    }
+
+    searchInput.addEventListener("input", e => {
+      renderSkills(e.target.value);
+    });
+
+    renderSkills();
+
+    // ✅ FIX: Removed the premature API call
+    function saveSkills() {
+      if (selectedSkills.length === 0) {
+        alert("Please select at least one skill!");
+        return;
+      }
+
+      // Save skills to localStorage only
+      localStorage.setItem("skills", JSON.stringify(selectedSkills));
+      alert("✅ Skills saved successfully!");
+
+      // Navigate to the next page
+      window.location.href = "7page.html";
+    }
+  </script>
+</body>
+
+</html>
