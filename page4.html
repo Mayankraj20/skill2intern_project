@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience Levels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #c76372, #acc6eb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 1s ease;
+        }
+
+        .container h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            animation: slideIn 1s ease;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin: 15px 0;
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+            background: linear-gradient(45deg, #8c64c5, #3e8a5d);
+
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .nextbtn {
+            display: block;
+            width: 100%;
+            margin: 15px 0;
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .container h1 {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 14px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Choose Your Experience Level</h1>
+        <button class="btn" onclick="saveExperience('Beginner')">Beginner Level</button>
+        <button class="btn" onclick="saveExperience('Intermediate')">Intermediate Level</button>
+        <button class="btn" onclick="saveExperience('Advanced')">Advanced Level</button>
+        <a href="5page.html">
+            <button class="nextbtn" id="nextBtn">Next ➨</button></a>
+    </div>
+
+    <script>
+        function saveExperience(level) {
+            localStorage.setItem("experience_level", level);
+            alert("✅ Experience Level Selected: " + level);
+        }
+
+        document.getElementById("nextBtn").addEventListener("click", (event) => {
+            const experience = localStorage.getItem("experience_level");
+            if (!experience) {
+                alert("⚠ Please select an experience level first!");
+                return;
+            }
+
+            // Backend call (Flask route example)
+            fetch("http://127.0.0.1:5000/save_experience", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ experience_level: experience, username: localStorage.getItem("username") })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Backend Response:", data.message);
+                    // Redirect to next page only after successful fetch
+                    window.location.href = "5page.html";
+                })
+                .catch(err => {
+                    console.error("Backend Error:", err);
+                    // Redirect even if backend fails to avoid blocking the user
+                    window.location.href = "5page.html";
+                });
+        });
+    </script>
+</body>
+
+</html>
