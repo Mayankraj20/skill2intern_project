@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Level</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #c76372, #acc6eb);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            text-align: center;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        header {
+            padding: 0;
+            margin-top: 20px;
+            font-size: xx-large;
+            text-align: center;
+            color: white;
+            /* Changed to white for better visibility */
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: white;
+            background: linear-gradient(45deg, #8c64c5, #3e8a5d);
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            background: linear-gradient(45deg, #dd2476, #ff512f);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1><i>What is your<br> current<br> education level?</i></h1>
+    </header>
+    <main>
+        <a href="6page.html">
+            <center>
+                <button onclick="saveEducation('High School')">🎓High School</button><br>
+                <button onclick="saveEducation('Diploma')">🎓Diploma</button><br>
+                <button onclick="saveEducation('Undergraduate')">🎓Undergraduate</button><br>
+                <button onclick="saveEducation('Postgraduate')">🎓Postgraduate</button><br>
+        </a>
+        </center>
+    </main>
+
+    <script>
+        function saveEducation(level) {
+            // Save to localStorage
+            localStorage.setItem("education_level", level);
+            alert("✅ Education Level Selected: " + level);
+
+            // Send POST request to backend
+            const data = {
+                username: localStorage.getItem("username"),
+                education_level: level
+            };
+
+            fetch("http://127.0.0.1:5000/save_education", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(resp => {
+                    console.log("Backend Response:", resp.message);
+                    // ✅ FIX: Navigate to the next page only after a successful response
+                    window.location.href = "6page.html";
+                })
+                .catch(err => {
+                    console.error("Backend Error:", err);
+                    // ✅ FIX: Even if there's an error, let the user move on to avoid getting stuck
+                    window.location.href = "6page.html";
+                });
+        }
+    </script>
+</body>
+
+</html>
