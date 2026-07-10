@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Duration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #c76372, #acc6eb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 1s ease;
+        }
+
+        .container h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            animation: slideIn 1s ease;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin: 15px 0;
+            padding: 18px 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+            background: linear-gradient(45deg, #8c64c5, #3e8a5d);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        /* Submit button animation */
+        .btn-submit {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+        }
+
+        .btn-submit::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .container h1 {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 14px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Choose Internship Duration</h1>
+        <button class="btn" onclick="saveDuration('1 - 2 Months')">1 - 2 Months</button>
+        <button class="btn" onclick="saveDuration('2 - 3 Months')">2 - 3 Months</button>
+        <button class="btn" onclick="saveDuration('Above 3 Months')">Above 3 Months</button>
+        <a href="8page.html">
+            <button id="submitBtn" class="btn btn-submit" onclick="submitData()" disabled>Get
+                Recommendations</button></a>
+    </div>
+
+    <script>
+        function saveDuration(duration) {
+            localStorage.setItem("preferred_duration", duration);
+            document.getElementById("submitBtn").disabled = false;
+        }
+
+        async function submitData() {
+            const data = {
+                name: localStorage.getItem("username") || "",
+                age: parseInt(localStorage.getItem("age")) || 0,
+                experience_level: localStorage.getItem("experience_level") || "",
+                education_level: localStorage.getItem("education_level") || "",
+                skills: JSON.parse(localStorage.getItem("skills")) || [],
+                preferred_duration: localStorage.getItem("preferred_duration") || ""
+            };
+
+            if (!data.preferred_duration) {
+                alert("⚠ Please select a duration first!");
+                return;
+            }
+
+            try {
+                // Step 1: Save the student's complete data
+                const studentResponse = await fetch("http://127.0.0.1:5000/add_student", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                const studentResult = await studentResponse.json();
+
+                if (!studentResponse.ok) {
+                    alert("❌ Error saving student data: " + studentResult.message);
+                    return;
+                }
+
+                // Step 2: Request recommendations based on the submitted data
+                const recResponse = await fetch("http://127.0.0.1:5000/recommend", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        skills: data.skills,
+                        education_level: data.education_level,
+                        experience_level: data.experience_level,
+                        preferred_duration: data.preferred_duration
+                    })
+                });
+
+                const recResult = await recResponse.json();
+
+                if (!recResponse.ok) {
+                    alert("❌ Error getting recommendations: " + recResult.message);
+                    return;
+                }
+
+                // Save the recommendations to localStorage
+                localStorage.setItem("recommendations", JSON.stringify(recResult));
+
+                // Finally, navigate to the recommendations page
+                window.location.href = "8page.html";
+
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                alert("❌ A network error occurred. Please check the backend server.");
+            }
+        }
+    </script>
+</body>
+
+</html>
